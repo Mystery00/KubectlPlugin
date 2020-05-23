@@ -40,10 +40,12 @@ jobs:
 
   push:
     name: Push
+    needs: build
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/download-artifact@v2
+    - name: 下载归档文件
+      uses: actions/download-artifact@v2
       with:
         name: k8s
 
