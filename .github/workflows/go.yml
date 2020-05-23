@@ -29,14 +29,14 @@ jobs:
             dep ensure
         fi
 
-    - name: 构建可执行文件
-      run: go build -v -o k8s KubectlPlugin
+    - name: 构建Mac可执行文件
+      run: go build -v -o k8s-mac KubectlPlugin
 
-    - name: 归档可执行文件
+    - name: 归档Mac可执行文件
       uses: actions/upload-artifact@v2
       with:
-        name: k8s
-        path: k8s
+        name: k8s-mac
+        path: k8s-mac
 
   push:
     name: Push
@@ -44,10 +44,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: 下载归档文件
+    - name: 拉取代码
+      uses: actions/checkout@v2
+    - name: 拉取依赖
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+    - name: 构建Linux可执行文件
+      run: go build -v -o k8s-linux KubectlPlugin
+    - name: 归档Linux可执行文件
+      uses: actions/upload-artifact@v2
+      with:
+        name: k8s-linux
+        path: k8s-linux
+
+    - name: 下载Mac归档文件
       uses: actions/download-artifact@v2
       with:
-        name: k8s
+        name: k8s-mac
 
     - name: 创建发布版本
       id: create_release
@@ -62,18 +79,34 @@ jobs:
         draft: false
         prerelease: true
 
-    - name: 压缩文件
+    - name: 压缩Mac可执行文件
       uses: montudor/action-zip@v0.1.0
       with:
-        args: zip -qq -r ./k8s.zip ./k8s
+        args: zip -qq -r ./k8s-linux.zip ./k8s-mac
 
-    - name: 发布压缩文件到Release中
+    - name: 压缩Linux可执行文件
+      uses: montudor/action-zip@v0.1.0
+      with:
+        args: zip -qq -r ./k8s-mac.zip ./k8s-linux
+
+    - name: 发布Mac压缩文件到Release中
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-        asset_path: ./k8s.zip
-        asset_name: k8s.zip
+        asset_path: ./k8s-mac.zip
+        asset_name: k8s-mac.zip
+        asset_content_type: application/zip
+
+    - name: 发布Linux压缩文件到Release中
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        asset_path: ./k8s-linux.zip
+        asset_name: k8s-linux.zip
         asset_content_type: application/zip
