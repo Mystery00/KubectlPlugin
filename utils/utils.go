@@ -3,6 +3,8 @@ package utils
 import (
 	"KubectlPlugin/mritd"
 	"github.com/mritd/promptx/utils"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -68,4 +70,25 @@ func Parse(tpl string, data interface{}) string {
 		os.Exit(1)
 	}
 	return string(utils.Render(res, data))
+}
+
+func DownloadFile(url string, fileName string) {
+	resp, err := http.Get(url)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	// 创建一个文件用于保存
+	out, err := os.Create(fileName)
+	if err != nil {
+		panic(err)
+	}
+	defer out.Close()
+
+	// 然后将响应流和文件流对接起来
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		panic(err)
+	}
 }

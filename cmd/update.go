@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,36 +31,15 @@ var updateCmd = &cobra.Command{
 		cmdStr := `wget -qO- -t1 -T2 "` + apiUrl + `" | grep "tag_name" | head -n 1 | awk -F ":" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g'`
 		latestVersion := strings.TrimSpace(utils.Cmd("sh", "-c", cmdStr))
 		if latestVersion != version {
+			//版本不一致，更新版本
 			fmt.Println(utils.INFO + " 检测到新版本 [" + latestVersion + "] ，正在下载...")
-			downloadFile(latestVersion)
+			utils.DownloadFile(fmt.Sprintf(downloadUrl, latestVersion), fileName)
 			copyFile()
 			fmt.Println("工具已更新为最新版本 [" + utils.Red(latestVersion) + "] !(注意：因为更新方式为直接覆盖当前运行的脚本，所以可能下面会提示一些报错，无视即可)")
 		} else {
 			fmt.Println(utils.WARN + " 当前已经是最新版本！")
 		}
 	},
-}
-
-func downloadFile(latestVersion string) {
-	//版本不一致，更新版本
-	resp, err := http.Get(fmt.Sprintf(downloadUrl, latestVersion))
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	// 创建一个文件用于保存
-	out, err := os.Create(fileName)
-	if err != nil {
-		panic(err)
-	}
-	defer out.Close()
-
-	// 然后将响应流和文件流对接起来
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		panic(err)
-	}
 }
 
 func copyFile() {
