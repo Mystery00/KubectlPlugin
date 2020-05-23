@@ -13,7 +13,7 @@ import (
 
 const user = "Mystery00"
 const project = "KubectlPlugin"
-const fileName = "k8s.zip"
+const fileName = "k8s-mac.zip"
 const k8sFileName = "k8s"
 const installPath = "/usr/local/bin/k8s"
 const apiUrl = "https://api.github.com/repos/" + user + "/" + project + "/releases/latest"
