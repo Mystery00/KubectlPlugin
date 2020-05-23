@@ -8,7 +8,7 @@ import (
 
 const version = "1.1.0"
 
-const versionTpl = utils.INFO + " k8s服务连接脚本 {{\"[v\"|red}}{{.|red}}{{\"]\"|red}}  -- Made with ♥ by Mystery0"
+const versionTpl = utils.INFO + " k8s服务连接脚本 {{\"[\"|red}}{{.|red}}{{\"]\"|red}}  -- Made with ♥ by Mystery0"
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
