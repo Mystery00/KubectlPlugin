@@ -15,9 +15,8 @@ func init() {
 }
 
 var versionCmd = &cobra.Command{
-	Use:     "version",
-	Aliases: []string{"-v", "-version"},
-	Short:   "显示版本号。",
+	Use:   "version",
+	Short: "显示版本号。",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(utils.Parse(versionTpl, version))
 	},

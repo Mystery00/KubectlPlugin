@@ -15,7 +15,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "k8s",
 	Short: "k8s服务连接工具",
-	Long:  `一个简单的k8s服务连接工具，使用Go语言编写。仓库地址： http://hugo.spf13.com`,
+	Long:  `一个简单的k8s服务连接工具，使用Go语言编写。仓库地址： https://github.com/Mystery00/KubectlPlugin`,
 	Run: func(cmd *cobra.Command, args []string) {
 		doAction()
 	},
