@@ -20,7 +20,7 @@ var portCmd = &cobra.Command{
 		//快速显示节点信息
 		if currentContext == "" {
 			//没有设置上下文，并且没有设置命名空间，那么查询一次上下文
-			setContext(getCurrentContext())
+			setContextOnly(getCurrentContext())
 		}
 		if currentNamespace == "" {
 			//没有设置命名空间，检测是否有默认命名空间，如果没有弹出菜单指定
