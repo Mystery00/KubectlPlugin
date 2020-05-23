@@ -1,10 +1,10 @@
-name: Go
-
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Create Release
 
 jobs:
 
@@ -32,6 +32,7 @@ jobs:
 
     - name: Build
       run: go build -v -o kp KubectlPlugin
+
     - name: Create a Release
       uses: actions/create-release@v1
       env:
@@ -42,4 +43,4 @@ jobs:
           body: |
             Auto build
           draft: false
-          prerelease: false
+          prerelease: true
