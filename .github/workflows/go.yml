@@ -4,7 +4,7 @@ on:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
-name: Create Release
+name: KubectlPlugin Build
 
 jobs:
 
@@ -13,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Set up Go 1.x
+    - name: 配置Golang环境
       uses: actions/setup-go@v2
       with:
         go-version: ^1.13
       id: go
 
-    - name: Check out code into the Go module directory
+    - name: 拉取代码
       uses: actions/checkout@v2
 
-    - name: Get dependencies
+    - name: 拉取依赖
       run: |
         go get -v -t -d ./...
         if [ -f Gopkg.toml ]; then
@@ -30,15 +30,16 @@ jobs:
             dep ensure
         fi
 
-    - name: Build
+    - name: 构建可执行文件
       run: go build -v -o k8s KubectlPlugin
 
-    - uses: actions/upload-artifact@v2
+    - name: 归档可执行文件
+      uses: actions/upload-artifact@v2
       with:
         name: k8s
         path: k8s
 
-    - name: Create a Release
+    - name: 创建发布版本
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -51,11 +52,12 @@ jobs:
         draft: false
         prerelease: true
 
-    - uses: montudor/action-zip@v0.1.0
+    - name: 压缩文件
+      uses: montudor/action-zip@v0.1.0
       with:
         args: zip -qq -r ./k8s.zip ./k8s
 
-    - name: Upload Release Asset
+    - name: 发布压缩文件到Release中
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
