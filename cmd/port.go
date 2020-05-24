@@ -101,6 +101,7 @@ func queryPort() {
 	//获取服务列表
 	services := gjson.Get(result, "items").Array()
 	//存储解析后的服务信息
+	var originServiceList []Service
 	var serviceList []Service
 	maxLength1 := 3
 	maxLength2 := 3
@@ -133,9 +134,43 @@ func queryPort() {
 			portStringList = append(portStringList, portString)
 		}
 		showPort := strings.Join(portStringList, ",")
-		serviceList = append(serviceList, Service{app, name, clusterIP, showPort, portList})
+		originServiceList = append(originServiceList, Service{app, name, clusterIP, showPort, portList})
 		maxLength1 = utils.Max(maxLength1, len(app))
 		maxLength2 = utils.Max(maxLength2, len(showPort))
+	}
+	if len(originServiceList) > 20 {
+		//选项数量多于20个，询问是否通过关键词进行过滤
+		fmt.Print("数量过多，请输入过滤关键词：(默认-不过滤)")
+		var input string
+		for true {
+			_, _ = fmt.Scanln(&input)
+			if input == "" {
+				//没有输入文本，跳过过滤
+				//拷贝Pod列表
+				serviceList = originServiceList
+				//跳出循环
+				break
+			}
+			//重置最大宽度
+			maxLength1 = 3
+			maxLength2 = 3
+			//清空旧的列表
+			serviceList = nil
+			for _, service := range originServiceList {
+				if strings.Contains(service.name, input) {
+					serviceList = append(serviceList, service)
+					maxLength1 = utils.Max(maxLength1, len(service.app))
+					maxLength2 = utils.Max(maxLength2, len(service.showPort))
+				}
+			}
+			if serviceList != nil {
+				break
+			} else {
+				fmt.Print(utils.WARN + " 没有数据满足过滤条件，请重新输入过滤关键词：")
+			}
+		}
+	} else {
+		serviceList = originServiceList
 	}
 	serviceTpl := utils.LINE + " [{{.NAME|rLength " + mritd.ToString(maxLength1) + "|blue}}] ⇛ [{{.PORT|lLength " + mritd.ToString(maxLength2) + "|magenta}}] " + utils.LINE
 	length := maxLength1 + maxLength2 + 9

@@ -122,6 +122,7 @@ func selectPod() (options, Pod) {
 	//获取pod列表-json
 	pods := gjson.Get(result, "items").Array()
 	//存储解析后的pod列表
+	var originPodList []Pod
 	var podList []Pod
 
 	//第一列最大宽度
@@ -139,14 +140,56 @@ func selectPod() (options, Pod) {
 			containerList = append(containerList, Container{name: gjson.Get(containerRaw.Raw, "name").String()})
 		}
 		pod := Pod{app.String(), branch.String(), name.String(), containerList}
-		podList = append(podList, pod)
-		maxLength1 = utils.Max(maxLength1, len(app.String()))
-		maxLength2 = utils.Max(maxLength2, len(branch.String()))
-		maxLength3 = utils.Max(maxLength3, len(name.String()))
+		if pod.app == "" {
+			pod.app = "[not app]"
+		}
+		if pod.branch == "" {
+			pod.branch = "[no branch]"
+		}
+		originPodList = append(originPodList, pod)
+		maxLength1 = utils.Max(maxLength1, len(pod.app))
+		maxLength2 = utils.Max(maxLength2, len(pod.branch))
+		maxLength3 = utils.Max(maxLength3, len(pod.name))
 	}
-	if podList == nil {
+	if originPodList == nil {
 		fmt.Println(utils.ERROR + " ☟☟️ 该命名空间中没有Pod，请切换命名空间...☟☟")
 		return OptionSwitchNamespace, Pod{}
+	}
+	if len(originPodList) > 20 {
+		//选项数量多于20个，询问是否通过关键词进行过滤
+		fmt.Print("Pod数量过多，请输入过滤关键词：(默认-不过滤)")
+		var input string
+		for true {
+			_, _ = fmt.Scanln(&input)
+			if input == "" {
+				//没有输入文本，跳过过滤
+				//拷贝Pod列表
+				podList = originPodList
+				//跳出循环
+				break
+			}
+			//重置最大宽度
+			maxLength1 = 4
+			maxLength2 = 3
+			maxLength3 = 3
+			//清空旧的列表
+			podList = nil
+			for _, pod := range originPodList {
+				if strings.Contains(pod.name, input) {
+					podList = append(podList, pod)
+					maxLength1 = utils.Max(maxLength1, len(pod.app))
+					maxLength2 = utils.Max(maxLength2, len(pod.branch))
+					maxLength3 = utils.Max(maxLength3, len(pod.name))
+				}
+			}
+			if podList != nil {
+				break
+			} else {
+				fmt.Print(utils.WARN + " 没有Pod满足过滤条件，请重新输入过滤关键词：")
+			}
+		}
+	} else {
+		podList = originPodList
 	}
 	maxOption := len(podList)
 
