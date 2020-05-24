@@ -59,22 +59,25 @@ func doAction() {
 			os.Exit(0)
 		}
 		fmt.Println()
-		i := strings.Index(pod.name, "-xylinkapp")
-		containName := pod.name[0:i]
 		//检查容器名称是否正确
 		var isContainerNameInvalid = true
-		for _, container := range pod.containers {
-			if containName == container.name {
-				isContainerNameInvalid = false
-				break
+		var containerName string
+		i := strings.Index(pod.name, "-xylinkapp")
+		if i != -1 {
+			containerName = pod.name[0:i]
+			for _, container := range pod.containers {
+				if containerName == container.name {
+					isContainerNameInvalid = false
+					break
+				}
 			}
 		}
 		if isContainerNameInvalid {
 			fmt.Println(utils.WARN + " 容器名称自动检测失败，请手动选择...")
 			container := selectContainer(pod.containers)
-			containName = container.name
+			containerName = container.name
 		}
-		cmd := exec.Command("kubectl", "exec", "-it", "-n", currentNamespace, pod.name, "-c", containName, "--", "/bin/bash")
+		cmd := exec.Command("kubectl", "exec", "-it", "-n", currentNamespace, pod.name, "-c", containerName, "--", "/bin/bash")
 		cmd.Stdin = os.Stdin
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
