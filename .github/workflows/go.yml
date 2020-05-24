@@ -80,7 +80,7 @@ jobs:
         body: |
           Auto build
         draft: false
-        prerelease: true
+        prerelease: false
 
     - name: 压缩Mac可执行文件
       uses: montudor/action-zip@v0.1.0
