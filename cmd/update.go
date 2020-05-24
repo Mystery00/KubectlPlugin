@@ -28,6 +28,9 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "更新工具版本。",
 	Run: func(cmd *cobra.Command, args []string) {
+		if err := os.MkdirAll(tempDir, 0755); err != nil {
+			panic(err)
+		}
 		var fileName string
 		var k8sFileName string
 		switch runtime.GOOS {
@@ -50,8 +53,8 @@ var updateCmd = &cobra.Command{
 		if latestVersion != version {
 			//版本不一致，更新版本
 			fmt.Println(utils.INFO + " 检测到新版本 [" + latestVersion + "] ，正在下载...")
-			utils.DownloadFile(fmt.Sprintf(downloadUrl+fileName, latestVersion), fileName)
-			copyFile(fileName, k8sFileName)
+			utils.DownloadFile(fmt.Sprintf(downloadUrl+fileName, latestVersion), tempDir+fileName)
+			copyFile(tempDir+fileName, k8sFileName)
 			fmt.Println("工具已更新为最新版本 [" + utils.Red(latestVersion) + "] !(注意：因为更新方式为直接覆盖当前运行的脚本，所以可能下面会提示一些报错，无视即可)")
 		} else {
 			fmt.Println(utils.WARN + " 当前已经是最新版本！")
@@ -74,6 +77,10 @@ func copyFile(fileName string, k8sFileName string) {
 	}
 	currentFileName := filepath.Base(path)
 	err = os.Rename(tempDir+k8sFileName, currentFileName)
+	if err != nil {
+		panic(err)
+	}
+	err = os.RemoveAll(fileName)
 	if err != nil {
 		panic(err)
 	}
