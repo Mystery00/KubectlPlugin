@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const version = "V1.1.1"
+const version = "V1.1.0"
 
-const versionTpl = utils.INFO + " k8s服务连接脚本 {{\"[\"|red}}{{.|red}}{{\"]\"|red}}  -- Made with ♥ by Mystery0"
+const versionTpl = utils.INFO + " k8s服务连接脚本 {{\"[\"|red}}{{.|red}}{{\"]\"|red}}  -- Made with {{\"♥\"|red}} by {{\"Mystery0\"|blue}}"
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
