@@ -206,7 +206,7 @@ func selectPod() (options, Pod) {
 
 	fmt.Println(utils.LEFT_TOP + strings.Repeat(utils.CENTER, length) + utils.RIGHT_TOP)
 	fmt.Println(utils.LINE + utils.PrintCenter("Please select the operation option to be performed", length) + utils.LINE)
-	fmt.Println(utils.LEFT_CENTER + strings.Repeat(utils.CENTER, 6) + utils.CENTER_TOP + strings.Repeat(utils.CENTER, specificOptionLength) + utils.LINE)
+	fmt.Println(utils.LEFT_CENTER + strings.Repeat(utils.CENTER, 6) + utils.CENTER_TOP + strings.Repeat(utils.CENTER, specificOptionLength) + utils.RIGHT_CENTER)
 	fmt.Println(utils.Parse(specificOptionTpl, struct {
 		INDEX  string
 		OPTION string
@@ -226,7 +226,7 @@ func selectPod() (options, Pod) {
 		OPTION string
 		INFO   string
 	}{"00.", "Switch Context", "[" + currentContext + "]"}))
-	fmt.Println(utils.LEFT_CENTER + strings.Repeat(utils.CENTER, 6) + utils.CENTER_TOP + strings.Repeat(utils.CENTER, specificOptionLength) + utils.LINE)
+	fmt.Println(utils.LEFT_CENTER + strings.Repeat(utils.CENTER, 6) + utils.CENTER_CENTER + strings.Repeat(utils.CENTER, specificOptionLength) + utils.RIGHT_CENTER)
 	fmt.Println(utils.Parse(specificOptionWithInfoTpl, struct {
 		INDEX  string
 		OPTION string
