@@ -25,13 +25,16 @@ var installCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		currentFileName := filepath.Base(path)
+		if path == installPath {
+			fmt.Println(utils.INFO + " 工具已经安装成功！")
+			return
+		}
 		// 创建文件
 		_, err = os.Create(installPath)
 		if err != nil {
 			panic(err)
 		}
-		err = os.Rename(currentFileName, installPath)
+		err = os.Rename(path, installPath)
 		if err != nil {
 			panic(err)
 		}
