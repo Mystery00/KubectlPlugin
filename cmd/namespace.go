@@ -1,13 +1,15 @@
 package cmd
 
 import (
-	"KubectlPlugin/mritd"
-	"KubectlPlugin/utils"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"os"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
+
+	"KubectlPlugin/mritd"
+	"KubectlPlugin/utils"
 )
 
 var currentNamespace string
@@ -28,9 +30,14 @@ var nameSpaceCmd = &cobra.Command{
 		//快速修改命名空间
 		if currentContext == "" {
 			//没有设置上下文，查询
-			setContext(getCurrentContext())
+			getCurrentContext()
 		}
-		setNamespace(currentContext, currentNamespace)
+		//快速修改命名空间
+		if currentNamespace == "" {
+			selectNamespace()
+		} else {
+			setNamespace(currentContext, currentNamespace)
+		}
 	},
 }
 

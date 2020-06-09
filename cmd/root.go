@@ -1,15 +1,17 @@
 package cmd
 
 import (
-	"KubectlPlugin/mritd"
-	"KubectlPlugin/utils"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/tidwall/gjson"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
+
+	"KubectlPlugin/mritd"
+	"KubectlPlugin/utils"
 )
 
 var rootCmd = &cobra.Command{

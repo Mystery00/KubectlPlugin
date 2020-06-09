@@ -1,12 +1,14 @@
 package cmd
 
 import (
-	"KubectlPlugin/utils"
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/spf13/cobra"
+
+	"KubectlPlugin/utils"
 )
 
 func init() {

@@ -1,16 +1,18 @@
 package cmd
 
 import (
-	"KubectlPlugin/utils"
 	"archive/zip"
 	"fmt"
-	"github.com/spf13/cobra"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/spf13/cobra"
+
+	"KubectlPlugin/utils"
 )
 
 const user = "Mystery00"

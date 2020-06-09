@@ -1,9 +1,11 @@
 package cmd
 
 import (
-	"KubectlPlugin/utils"
 	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"KubectlPlugin/utils"
 )
 
 const version = "V1.1.1"

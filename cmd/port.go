@@ -1,12 +1,14 @@
 package cmd
 
 import (
-	"KubectlPlugin/mritd"
-	"KubectlPlugin/utils"
 	"fmt"
+	"strings"
+
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
-	"strings"
+
+	"KubectlPlugin/mritd"
+	"KubectlPlugin/utils"
 )
 
 func init() {

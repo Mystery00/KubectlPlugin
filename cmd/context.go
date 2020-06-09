@@ -1,12 +1,14 @@
 package cmd
 
 import (
-	"KubectlPlugin/mritd"
-	"KubectlPlugin/utils"
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
 	"strings"
+
+	"github.com/spf13/cobra"
+
+	"KubectlPlugin/mritd"
+	"KubectlPlugin/utils"
 )
 
 var currentContext string
