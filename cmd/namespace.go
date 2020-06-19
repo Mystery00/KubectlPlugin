@@ -23,9 +23,10 @@ func init() {
 }
 
 var nameSpaceCmd = &cobra.Command{
-	Use:   "namespace",
-	Short: "仅切换命名空间。",
-	Long:  `将命名空间设置为当前集群环境的默认命名空间。`,
+	Use:     "namespace",
+	Aliases: []string{"ns"},
+	Short:   "仅切换命名空间。",
+	Long:    `将命名空间设置为当前集群环境的默认命名空间。`,
 	Run: func(cmd *cobra.Command, args []string) {
 		//快速修改命名空间
 		if currentContext == "" {

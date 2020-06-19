@@ -22,9 +22,10 @@ func init() {
 }
 
 var contextCmd = &cobra.Command{
-	Use:   "context",
-	Short: "仅切换集群环境。",
-	Long:  `切换集群环境，并且应用到 kubectl 的配置文件中。`,
+	Use:     "context",
+	Aliases: []string{"cs"},
+	Short:   "仅切换集群环境。",
+	Long:    `切换集群环境，并且应用到 kubectl 的配置文件中。`,
 	Run: func(cmd *cobra.Command, args []string) {
 		//快速修改上下文
 		if currentContext == "" {
