@@ -8,7 +8,7 @@ import (
 
 var fastName string
 var fastIndexInput string
-var fastIndex int
+var fastIndex = -1
 var isFast bool
 
 func init() {
