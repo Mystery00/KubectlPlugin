@@ -160,18 +160,24 @@ func selectPod() (options, Pod) {
 		fmt.Println(utils.ERROR + " ☟☟️ 该命名空间中没有Pod，请切换命名空间...☟☟")
 		return OptionSwitchNamespace, Pod{}
 	}
-	if len(originPodList) > 20 {
-		//选项数量多于20个，询问是否通过关键词进行过滤
-		fmt.Print("Pod数量过多，请输入过滤关键词：(默认-不过滤)")
+	if isFast || len(originPodList) > 20 {
+		if !isFast {
+			//选项数量多于20个，询问是否通过关键词进行过滤
+			fmt.Print("Pod数量过多，请输入过滤关键词：(默认-不过滤)")
+		}
 		var input string
 		for true {
-			_, _ = fmt.Scanln(&input)
-			if input == "" {
-				//没有输入文本，跳过过滤
-				//拷贝Pod列表
-				podList = originPodList
-				//跳出循环
-				break
+			if !isFast {
+				_, _ = fmt.Scanln(&input)
+				if input == "" {
+					//没有输入文本，跳过过滤
+					//拷贝Pod列表
+					podList = originPodList
+					//跳出循环
+					break
+				}
+			} else {
+				input = fastName
 			}
 			//重置最大宽度
 			maxLength1 = 4
@@ -236,24 +242,40 @@ func selectPod() (options, Pod) {
 	}{"000.", "Switch Namespace", "[" + currentNamespace + "]"}))
 	fmt.Println(utils.LEFT_BOTTOM + strings.Repeat(utils.CENTER, 6) + utils.CENTER_BOTTOM + strings.Repeat(utils.CENTER, specificOptionLength) + utils.RIGHT_BOTTOM)
 	fmt.Println()
-	fmt.Printf(" 请输入数字 [0-%d,00,000](默认-退出脚本)：", maxOption)
+	if maxOption == 1 {
+		fmt.Printf(" 请输入数字 [0-%d,00,000](默认-进入这个容器)：", maxOption)
+	} else {
+		fmt.Printf(" 请输入数字 [0-%d,00,000](默认-退出脚本)：", maxOption)
+	}
 	var notValid = true
 	var input string
 	var index int
 	for notValid {
 		size, err := fmt.Scanln(&input)
 		i, err1 := strconv.Atoi(input)
-		if input == "" {
-			fmt.Println()
-			fmt.Println(utils.INFO + " 不操作，退出脚本中...")
-			os.Exit(0)
-		}
-		if size < 1 || i < 0 || i > maxOption || err != nil || err1 != nil {
-			fmt.Println()
-			fmt.Printf(utils.ERROR+" 请输入正确数字 [0-%d,00,000]：", maxOption)
-		} else {
-			index = i
+		if isFast && input == "" {
+			index = 1
+			input = string(index)
 			notValid = false
+		} else {
+			if input == "" {
+				if maxOption == 1 {
+					input = string(1)
+					size = len(input)
+					i = 1
+				} else {
+					fmt.Println()
+					fmt.Println(utils.INFO + " 不操作，退出脚本中...")
+					os.Exit(0)
+				}
+			}
+			if size < 1 || i < 0 || i > maxOption || err != nil || err1 != nil {
+				fmt.Println()
+				fmt.Printf(utils.ERROR+" 请输入正确数字 [0-%d,00,000]：", maxOption)
+			} else {
+				index = i
+				notValid = false
+			}
 		}
 	}
 	var optionIndex = options(index)
