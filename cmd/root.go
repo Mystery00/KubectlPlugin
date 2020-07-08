@@ -83,12 +83,17 @@ func doAction() {
 		cmd.Stdin = os.Stdin
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
-		fmt.Println(utils.INFO + " 正在连接到Shell...")
+		connectTpl := utils.INFO_TPL + " 正在连接到 [{{.|cyan}}] 的Shell..."
+		fmt.Println(utils.Parse(connectTpl, pod.name))
 		fmt.Println(strings.Repeat(utils.CENTER, 40) + " 输出开始 " + strings.Repeat(utils.CENTER, 40))
 		_ = cmd.Run()
 		fmt.Println(strings.Repeat(utils.CENTER, 40) + " 输出结束 " + strings.Repeat(utils.CENTER, 40))
 		fmt.Println(utils.INFO + " Shell已退出...")
 		fmt.Println()
+		if fastIndex != -1 {
+			//清除快速序号
+			fastIndex = -1
+		}
 		input := shouldContinue()
 		if strings.ToLower(input) == "y" {
 			continue
@@ -242,41 +247,51 @@ func selectPod() (options, Pod) {
 	}{"000.", "Switch Namespace", "[" + currentNamespace + "]"}))
 	fmt.Println(utils.LEFT_BOTTOM + strings.Repeat(utils.CENTER, 6) + utils.CENTER_BOTTOM + strings.Repeat(utils.CENTER, specificOptionLength) + utils.RIGHT_BOTTOM)
 	fmt.Println()
-	if maxOption == 1 {
-		fmt.Printf(" 请输入数字 [0-%d,00,000](默认-进入这个容器)：", maxOption)
-	} else {
-		fmt.Printf(" 请输入数字 [0-%d,00,000](默认-退出脚本)：", maxOption)
+	if fastIndex == -1 {
+		if maxOption == 1 {
+			fmt.Printf(" 请输入数字 [0-%d,00,000](默认-进入这个容器)：", maxOption)
+		} else {
+			fmt.Printf(" 请输入数字 [0-%d,00,000](默认-退出脚本)：", maxOption)
+		}
 	}
+
 	var notValid = true
 	var input string
 	var index int
 	for notValid {
-		size, err := fmt.Scanln(&input)
-		i, err1 := strconv.Atoi(input)
-		if isFast && input == "" {
-			index = 1
+		if fastIndex > 0 {
+			index = fastIndex
 			input = string(index)
 			notValid = false
 		} else {
-			if input == "" {
-				if maxOption == 1 {
-					input = string(1)
-					size = len(input)
-					i = 1
-				} else {
+			size, err := fmt.Scanln(&input)
+			i, err1 := strconv.Atoi(input)
+			if isFast && input == "" {
+				index = 1
+				input = string(index)
+				notValid = false
+			} else {
+				if input == "" {
+					if maxOption == 1 {
+						input = string(1)
+						size = len(input)
+						i = 1
+					} else {
+						fmt.Println()
+						fmt.Println(utils.INFO + " 不操作，退出脚本中...")
+						os.Exit(0)
+					}
+				}
+				if size < 1 || i < 0 || i > maxOption || err != nil || err1 != nil {
 					fmt.Println()
-					fmt.Println(utils.INFO + " 不操作，退出脚本中...")
-					os.Exit(0)
+					fmt.Printf(utils.ERROR+" 请输入正确数字 [0-%d,00,000]：", maxOption)
+				} else {
+					index = i
+					notValid = false
 				}
 			}
-			if size < 1 || i < 0 || i > maxOption || err != nil || err1 != nil {
-				fmt.Println()
-				fmt.Printf(utils.ERROR+" 请输入正确数字 [0-%d,00,000]：", maxOption)
-			} else {
-				index = i
-				notValid = false
-			}
 		}
+
 	}
 	var optionIndex = options(index)
 	switch {
