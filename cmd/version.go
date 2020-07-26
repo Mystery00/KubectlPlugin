@@ -8,7 +8,7 @@ import (
 	"KubectlPlugin/utils"
 )
 
-const version = "V1.1.3"
+const version = "V1.1.4"
 
 const versionTpl = utils.INFO + " k8s服务连接脚本 {{\"[\"|red}}{{.|red}}{{\"]\"|red}}  -- Made with {{\"♥\"|red}} by {{\"Mystery0\"|blue}}"
 
