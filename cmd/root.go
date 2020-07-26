@@ -63,15 +63,11 @@ func doAction() {
 		fmt.Println()
 		//检查容器名称是否正确
 		var isContainerNameInvalid = true
-		var containerName string
-		i := strings.Index(pod.name, "-xylinkapp")
-		if i != -1 {
-			containerName = pod.name[0:i]
-			for _, container := range pod.containers {
-				if containerName == container.name {
-					isContainerNameInvalid = false
-					break
-				}
+		var containerName = pod.app
+		for _, container := range pod.containers {
+			if containerName == container.name {
+				isContainerNameInvalid = false
+				break
 			}
 		}
 		if isContainerNameInvalid {
